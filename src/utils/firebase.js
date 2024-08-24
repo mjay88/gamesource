@@ -4,13 +4,13 @@ import { getAuth } from "firebase/auth";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-	apiKey: "AIzaSyB-oUQaeRPsrzBZ-uCFRFD73zHd_bKxiyA",
-	authDomain: "gamesource-1573a.firebaseapp.com",
-	projectId: "gamesource-1573a",
-	storageBucket: "gamesource-1573a.appspot.com",
-	messagingSenderId: "86522590254",
-	appId: "1:86522590254:web:f4a1aca0ffd0ffcd761bbf",
-	measurementId: "G-Z0NHKNT21N",
+	apiKey: import.meta.env.VITE_API_KEY,
+	authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+	projectId: import.meta.env.VITE_PROJECT_ID,
+	storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+	messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+	appId: import.meta.env.VITE_APP_ID,
+	measurementId: import.meta.env.VITE_MEASUREMENT_ID,
 };
 
 initializeApp(firebaseConfig);
