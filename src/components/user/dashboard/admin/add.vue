@@ -1,7 +1,7 @@
 <template>
 	<h1>Add Article</h1>
 	<hr />
-	<Form class="mb-5" @submit="onSubmit">
+	<Form class="mb-5" @submit="onSubmit" :validation-schema="ArticleSchema">
 		<!--NAME OF GAME-->
 		<div class="mb-4">
 			<Field name="game" v-slot="{ field, errors, errorMessage }">
@@ -48,6 +48,19 @@
 			</Field>
 		</div>
 		<!--WYSIWYG-->
+		<div class="mb-4">
+			<WYSIWYG @update="updateEditor" />
+			<Field
+				name="editor"
+				v-model="veditor"
+				v-slot="{ field, errors, errorMessage }"
+			>
+				<input type="hidden" id="veditor" v-bind="field" />
+				<div class="input_alert" v-if="errors.length !== 0">
+					{{ errorMessage }}
+				</div>
+			</Field>
+		</div>
 
 		<!--RATING-->
 		<div class="mb-4">
@@ -92,10 +105,18 @@
 <script setup>
 import { ref } from "vue";
 import { Field, Form } from "vee-validate";
+import ArticleSchema from "./schema.js";
+//WYSIWYG
+import WYSIWYG from "@/utils/wysiwyg.vue";
 
 const ratingArray = [0, 1, 2, 3, 4, 5];
+const veditor = ref("");
 
 function onSubmit(values, { resetForm }) {
 	console.log(values);
+}
+
+function updateEditor(value) {
+	veditor.value = value;
 }
 </script>
