@@ -3,6 +3,7 @@ import { isLoggedIn, isAuth } from "@/composables/auth";
 
 import Home from "@/components/home/index.vue";
 import Signin from "@/components/user/signin.vue";
+import Notfound from "@/components/404.vue";
 
 import DashBoardMain from "@/components/user/dashboard/main.vue";
 import Dashboard from "@/components/user/dashboard/index.vue";
@@ -40,6 +41,7 @@ const router = createRouter({
 				},
 			],
 		},
+		{ path: "/:notFound(.*)*", component: Notfound, name: "404" },
 	],
 });
 

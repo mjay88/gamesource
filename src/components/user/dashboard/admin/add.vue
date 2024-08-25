@@ -1,7 +1,17 @@
 <template>
 	<h1>Add Article</h1>
+
+	<div class="text-center m-3" v-show="loading">
+		<v-progress-circular indeterminate color="primary" />
+	</div>
+
 	<hr />
-	<Form class="mb-5" @submit="onSubmit" :validation-schema="ArticleSchema">
+	<Form
+		v-show="!loading"
+		class="mb-5"
+		@submit="onSubmit"
+		:validation-schema="ArticleSchema"
+	>
 		<!--NAME OF GAME-->
 		<div class="mb-4">
 			<Field name="game" v-slot="{ field, errors, errorMessage }">
@@ -108,12 +118,30 @@ import { Field, Form } from "vee-validate";
 import ArticleSchema from "./schema.js";
 //WYSIWYG
 import WYSIWYG from "@/utils/wysiwyg.vue";
+//ARTICLE STORE
+import { useArticleStore } from "@/stores/articles.js";
+//TOASTS
+import { useToast } from "vue-toast-notification";
+const $toast = useToast();
+const articleStore = useArticleStore();
 
+const loading = ref(false);
 const ratingArray = [0, 1, 2, 3, 4, 5];
 const veditor = ref("");
 
 function onSubmit(values, { resetForm }) {
-	console.log(values);
+	loading.value = true;
+	articleStore
+		.addArticle(values)
+		.then(() => {
+			$toast.success("New Article created");
+		})
+		.catch((error) => {
+			$toast.error(error.message);
+		})
+		.finally(() => {
+			loading.value = false;
+		});
 }
 
 function updateEditor(value) {
