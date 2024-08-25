@@ -31,8 +31,33 @@ export const useArticleStore = defineStore("article", {
 		adminArticles: "",
 		adminLastVisible: "",
 	}),
-	getters: {},
+	getters: {
+		getHomeArticles(state) {
+			return state.homeArticles;
+		},
+		getFeaturedSlides(state) {
+			return state.homeArticles.slice(0, 2);
+		},
+	},
 	actions: {
+		async getArticles(docsLimit) {
+			try {
+				const q = query(
+					articlesCol,
+					orderBy("timestamp", "desc"),
+					limit(docsLimit)
+				);
+				const querySnapshot = await getDocs(q);
+				const articles = querySnapshot.docs.map((doc) => ({
+					id: doc.id,
+					...doc.data(),
+				}));
+				this.homeArticles = articles;
+			} catch (error) {
+				$toast.error(error.message);
+				throw new Error(error);
+			}
+		},
 		async updateArticle(id, formData) {
 			try {
 				const docRef = doc(DB, "articles", id);
@@ -79,6 +104,66 @@ export const useArticleStore = defineStore("article", {
 				router.push({ name: "admin_articles", query: { reload: true } });
 				return true;
 			} catch (error) {
+				throw new Error(error);
+			}
+		},
+		async adminGetMoreArticles(docLimit) {
+			try {
+				if (this.adminLastVisible) {
+					let oldArticles = this.adminArticles;
+					const q = query(
+						articlesCol,
+						orderBy("timestamp", "desc"),
+						startAfter(this.adminLastVisible),
+						limit(docLimit)
+					);
+					const querySnapshot = await getDocs(q);
+					const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+					const newArticles = querySnapshot.docs.map((doc) => ({
+						id: doc.id,
+						...doc.data(),
+					}));
+
+					this.adminArticles = [...oldArticles, ...newArticles];
+					this.adminLastVisible = lastVisible;
+				}
+			} catch (error) {
+				$toast.error(error.message);
+				throw new Error(error);
+			}
+		},
+		async adminGetArticles(docLimit) {
+			try {
+				const q = query(
+					articlesCol,
+					orderBy("timestamp", "desc"),
+					limit(docLimit)
+				);
+				const querySnapshot = await getDocs(q);
+				const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+				const articles = querySnapshot.docs.map((doc) => ({
+					id: doc.id,
+					...doc.data(),
+				}));
+				//UPDATE ADMIN ARTICLES
+				this.adminArticles = articles;
+				this.adminLastVisible = lastVisible;
+			} catch (error) {
+				$toast.error(error.message);
+				throw new Error(error);
+			}
+		},
+		async removeById(articleID) {
+			try {
+				await deleteDoc(doc(DB, "articles", articleID));
+				const newList = this.adminArticles.filter((x) => {
+					return x.id != articleID;
+				});
+				this.adminArticles = newList;
+				//SHOW TOASTS
+				$toast.success("Removed!!!");
+			} catch (error) {
+				$toast.error(error.message);
 				throw new Error(error);
 			}
 		},

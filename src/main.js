@@ -15,6 +15,8 @@ import router from "./router";
 //  TOASTS
 import ToastPlugin from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-bootstrap.css";
+//VUE MASONRY
+import { VueMasonryPlugin } from "vue-masonry";
 
 const vuetify = createVuetify({
 	components,
@@ -35,6 +37,7 @@ onAuthStateChanged(AUTH, () => {
 		app.use(router);
 		app.use(vuetify);
 		app.use(ToastPlugin);
+		app.use(VueMasonryPlugin);
 		app.mount("#app");
 	}
 });
